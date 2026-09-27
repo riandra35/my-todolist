@@ -1,1 +1,31 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List Online</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>To-Do List 📝</h1>
+        
+        <div class="input-section">
+            <input type="text" id="taskInput" placeholder="Ketik tugas baru di sini...">
+            <select id="priorityInput">
+                <option value="Rendah">Rendah</option>
+                <option value="Sedang">Sedang</option>
+                <option value="Tinggi">Tinggi</option>
+            </select>
+            <button onclick="addTask()" id="addBtn">Tambah</button>
+        </div>
 
+        <ul id="taskList">
+            <!-- Daftar tugas akan dimunculkan di sini oleh JavaScript -->
+            <li class="loading">Memuat tugas...</li>
+        </ul>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
