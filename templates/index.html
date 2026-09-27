@@ -3,27 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do List Online</title>
+    <title>Task Management Board</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- FontAwesome untuk Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <h1>To-Do List 📝</h1>
-        
-        <div class="input-section">
-            <input type="text" id="taskInput" placeholder="Ketik tugas baru di sini...">
-            <select id="priorityInput">
-                <option value="Rendah">Rendah</option>
-                <option value="Sedang">Sedang</option>
-                <option value="Tinggi">Tinggi</option>
-            </select>
-            <button onclick="addTask()" id="addBtn">Tambah</button>
+    
+    <!-- Animasi Loading (Overlay) -->
+    <div id="loadingOverlay" class="overlay hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Header Aplikasi -->
+    <header class="app-header">
+        <div class="header-left">
+            <h2>Task Management</h2>
+        </div>
+        <div class="header-right">
+            <button class="btn-primary" onclick="openAddModal()"><i class="fas fa-plus"></i> Add Task</button>
+        </div>
+    </header>
+
+    <!-- Kanban Board (Sesuai referensi gambar) -->
+    <div class="board-container">
+        <!-- Column 1: New Task -->
+        <div class="board-column col-new">
+            <div class="column-header">
+                <h3>New Task</h3>
+                <span class="count" id="count-new">0</span>
+            </div>
+            <div class="task-list" id="list-new"></div>
         </div>
 
-        <ul id="taskList">
-            <!-- Daftar tugas akan dimunculkan di sini oleh JavaScript -->
-            <li class="loading">Memuat tugas...</li>
-        </ul>
+        <!-- Column 2: In Progress -->
+        <div class="board-column col-progress">
+            <div class="column-header">
+                <h3>In Progress</h3>
+                <span class="count" id="count-in_progress">0</span>
+            </div>
+            <div class="task-list" id="list-in_progress"></div>
+        </div>
+
+        <!-- Column 3: Pending -->
+        <div class="board-column col-pending">
+            <div class="column-header">
+                <h3>Pending</h3>
+                <span class="count" id="count-pending">0</span>
+            </div>
+            <div class="task-list" id="list-pending"></div>
+        </div>
+
+        <!-- Column 4: Complete -->
+        <div class="board-column col-complete">
+            <div class="column-header">
+                <h3>Complete</h3>
+                <span class="count" id="count-complete">0</span>
+            </div>
+            <div class="task-list" id="list-complete"></div>
+        </div>
+    </div>
+
+    <!-- Modal Form Tambah Tugas -->
+    <div id="addTaskModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Task</h3>
+                <button class="close-btn" onclick="closeAddModal()">&times;</button>
+            </div>
+            <form id="taskForm" onsubmit="submitTask(event)">
+                <div class="form-group">
+                    <label>Judul Tugas</label>
+                    <input type="text" id="inputTitle" required placeholder="Contoh: Desain Web">
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi Singkat</label>
+                    <textarea id="inputDesc" rows="3" required placeholder="Detail tugas..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>PIC (Penanggung Jawab)</label>
+                        <input type="text" id="inputPIC" required placeholder="Nama anggota">
+                    </div>
+                    <div class="form-group">
+                        <label>Status Awal</label>
+                        <select id="inputStatus">
+                            <option value="new">New Task</option>
+                            <option value="in_progress">In Progress</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" id="inputStart" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Deadline (End Date)</label>
+                        <input type="date" id="inputDeadline" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeAddModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Hapus -->
+    <div id="deleteModal" class="modal hidden">
+        <div class="modal-content modal-sm">
+            <h3>Hapus Tugas?</h3>
+            <p>Tugas yang dihapus tidak dapat dikembalikan.</p>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeDeleteModal()">Batal</button>
+                <button class="btn-danger" id="confirmDeleteBtn">Ya, Hapus</button>
+            </div>
+        </div>
     </div>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
